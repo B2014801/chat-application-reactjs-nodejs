@@ -1,0 +1,25 @@
+.home-container{
+    display: flex;
+    height: 100vh;
+    .home-left-side{
+        width: 30%;
+        background-color: #514688;
+    }
+    .home-right-side{
+        width: 70%;
+        .header{
+            background-color: #50c1a5;
+        }
+        .body{
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            background-color: #ffefef;
+            height: calc(100vh - 74px);
+
+            .message-list{
+                padding: 0 1rem;
+            }
+        }
+    }
+}

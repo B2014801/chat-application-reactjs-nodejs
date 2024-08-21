@@ -1,0 +1,102 @@
+.chat-user-container{
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+    .avata {
+        margin-right: 1rem;
+        img{
+            border-radius: 999px;
+            width: 50px;
+            height: 50px;
+        }
+    }
+    
+    .chat-user-infor{
+        h4{
+            margin: 0;
+        }
+        p{
+            margin: 4px 0;
+        }
+    }
+}
+.user-hover{
+    &:hover{
+        background-color: #3f376a;
+    }
+}
+.search-container{
+    padding: 0 20px;
+    color: white;
+    input{
+        outline: none;
+        padding-left: 0.5rem;
+        border: none;
+        background-color: transparent;
+    }
+    input,input::placeholder{
+        color: #ada2e4;
+    }
+}
+.disable-message{
+    color: #ada2e4;
+}
+.message{
+    margin-bottom: 1rem;
+    padding: 0;
+    align-items: start;
+    
+    p{
+        margin: 0;
+    }
+    .message-container{
+        max-width: 70%;
+        border-radius: 12px;
+        padding: 1rem 0.6rem;
+        background-color: white;
+        color: #504e4e;
+        p{
+            word-wrap: break-word;
+        }
+    }
+    .message-from-currentuser{
+        justify-content: end;
+        background-color: #50c1a5;
+        color: white;
+    }
+}
+.justify-content-end{
+    justify-content: end;
+}
+.message-input-container{
+    display: flex;
+    justify-content: center;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+    .message-input{
+        border-radius: 6px;
+        padding: 0 2.5rem 0 1rem;
+        display: table;
+        position: relative;
+        height: 10%;
+        width: 100%;
+        background-color: white;
+        button{
+            position: absolute;
+            right: 1%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            border-radius: 999px;
+            padding: 0.6rem 0.8rem;
+            background-color: #50c1a5;
+        }
+        input{
+            border: none;
+            outline: none;
+            padding: 1rem 0;
+            width: 99%;
+        }
+    }
+}
