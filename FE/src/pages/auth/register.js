@@ -1,9 +1,11 @@
-import classNames from "classnames/bind";
-import style from "./auth.module.scss";
 import { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+
+import classNames from "classnames/bind";
+import style from "./auth.module.scss";
 import { serverApi } from "../url/apiUrl";
 
 //SHOW PASS
@@ -16,6 +18,7 @@ function Register() {
     draggable: true,
     theme: "dark",
   };
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -35,7 +38,7 @@ function Register() {
       return false;
     }
     if (username.length <= 2) {
-      toast.error("Username must have 4 characters or more", toastOptions);
+      toast.error("Username must have 2 characters or more", toastOptions);
       return false;
     }
     if (password === "") {
@@ -56,11 +59,20 @@ function Register() {
     event.preventDefault();
     let { username, password } = formData;
     if (isValidUser()) {
-      let result = await axios.post(serverApi.register, {
+      const { data } = await axios.post(serverApi.register, {
         username: username,
         password: password,
       });
-      console.log(result);
+      if (data.status === false) {
+        toast.error(data.message, toastOptions);
+      } else {
+        toast.success("Registered successfully", toastOptions);
+        navigate("/");
+        localStorage.setItem(
+          process.env.REACT_APP_LOCALHOST_USER,
+          JSON.stringify(data.user)
+        );
+      }
     }
   };
   return (

@@ -3,16 +3,28 @@ import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 import classNames from "classnames/bind";
 import style from "./Component.module.scss";
+import { useState } from "react";
 
 const cx = classNames.bind(style);
-function MessageInput() {
+function MessageInput({ sendIsTyping, onSubmit }) {
+  const [message, setMessage] = useState("");
+  const hanldeChange = (event) => {
+    sendIsTyping(true);
+    setMessage(event.target.value);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit(message);
+  };
   return (
     <div className={cx("message-input-container")}>
       <div className={cx("message-input")}>
-        <input></input>
-        <button>
-          <FontAwesomeIcon icon={faArrowUp}></FontAwesomeIcon>
-        </button>
+        <form onSubmit={(event) => handleSubmit(event)}>
+          <input type="text" onChange={(event) => hanldeChange(event)}></input>
+          <button>
+            <FontAwesomeIcon icon={faArrowUp}></FontAwesomeIcon>
+          </button>
+        </form>
       </div>
     </div>
   );
