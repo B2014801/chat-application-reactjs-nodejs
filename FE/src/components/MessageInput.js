@@ -14,13 +14,20 @@ function MessageInput({ sendIsTyping, onSubmit }) {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit(message);
+    if (message.trim() !== "") {
+      setMessage("");
+      onSubmit(message);
+    }
   };
   return (
     <div className={cx("message-input-container")}>
       <div className={cx("message-input")}>
         <form onSubmit={(event) => handleSubmit(event)}>
-          <input type="text" onChange={(event) => hanldeChange(event)}></input>
+          <input
+            type="text"
+            value={message}
+            onChange={(event) => hanldeChange(event)}
+          ></input>
           <button>
             <FontAwesomeIcon icon={faArrowUp}></FontAwesomeIcon>
           </button>

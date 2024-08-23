@@ -44,7 +44,7 @@
     color: #ada2e4;
 }
 .message{
-    margin-bottom: 1rem;
+    margin-top: 1rem;
     padding: 0;
     align-items: start;
     
@@ -100,4 +100,10 @@
             width: 99%;
         }
     }
+}
+.mt-1{
+    margin-top: 0.2rem;
+}
+.ml-2{
+    margin-left: calc(50px + 1rem);
 }

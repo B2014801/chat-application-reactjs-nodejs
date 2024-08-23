@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import axios from "axios";
+import { io } from "socket.io-client";
 
 import ChatUser from "../../components/ChatUser";
 import classNames from "classnames/bind";
@@ -8,15 +9,16 @@ import style from "./home.module.scss";
 import Search from "../../components/Search";
 import Message from "../../components/Message";
 import MessageInput from "../../components/MessageInput";
-import { serverApi } from "../url/apiUrl";
+import { serverApi, serverUrl } from "../url/apiUrl";
 
 const cx = classNames.bind(style);
 function Home() {
   const navigate = useNavigate();
-
+  const socket = useRef();
   const [users, setUsers] = useState([]);
   const [currentFriend, setCurrentFriend] = useState({
     _id: null,
+    username: "",
     message: [],
   });
   const [currentUser] = useState(
@@ -24,56 +26,92 @@ function Home() {
       ? undefined
       : JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_USER))
   );
+  const messageList = useRef(null);
   useEffect(() => {
     (async () => {
-      if (currentUser === undefined) {
+      if (!currentUser) {
         navigate("/login");
       } else {
         const { data } = await axios.get(
           serverApi.getAllUser + "/" + currentUser._id
         );
-        setUsers(data);
+        const updatedData = await Promise.all(
+          data.map(async (user) => {
+            const { data: messages } = await axios.post(
+              serverApi.getAllMessage,
+              {
+                from: currentUser._id,
+                to: user._id,
+              }
+            );
+
+            user.message = messages;
+            return user;
+          })
+        );
+        setUsers(updatedData);
+        socket.current.emit("add-user", currentUser._id);
       }
     })();
   }, [navigate, currentUser]);
 
-  const handleChangeCurrentFriend = (id) => {
-    if (id !== currentFriend._id) {
-      const getMessage = async () => {
-        const { data } = await axios.post(serverApi.getAllMessage, {
-          from: currentUser._id,
-          to: id,
-        });
-        if (data.length > 0) {
-          setCurrentFriend({ _id: id, message: data });
-        }
-        setCurrentFriend({ _id: id, message: data });
-      };
+  useEffect(() => {
+    socket.current = io(serverUrl);
+    socket.current.on("message-recieve", (data) => {
+      addMessage(data.from, data.message, false);
+    });
+  }, []);
 
-      getMessage();
-    }
+  const addMessage = (id, message, self) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user._id === id) {
+          return {
+            ...user,
+            message: [{ message: message, fromSelf: self }, ...user.message],
+          };
+        }
+        return user;
+      })
+    );
+  };
+
+  const handleChangeCurrentFriend = (user) => {
+    setCurrentFriend(user);
   };
 
   const handleChangeMessageInput = (isTyping) => {};
 
   const handleSendMessage = async (message) => {
-    await axios.post(serverApi.sendMessage, {
+    const data = {
       from: currentUser._id,
       to: currentFriend._id,
       message: message,
-    });
+    };
+    await axios.post(serverApi.sendMessage, data);
+    socket.current.emit("send-message", data);
+    addMessage(currentFriend._id, message, true);
   };
+
+  const getCurrentMessage = useMemo(() => {
+    return users.filter((user) => user._id === currentFriend._id)[0]?.message;
+  }, [currentFriend._id, users]);
+
   return (
     <div className={cx("home-container")}>
       <div className={cx("home-left-side")}>
-        <ChatUser username={"asdfadfsa"}></ChatUser>
+        <ChatUser username={currentUser?.username} hover={false}></ChatUser>
         <Search />
         {users.map((user) => (
           <ChatUser
             key={user._id}
             username={user.username}
-            message={"asdf"}
-            onClick={() => handleChangeCurrentFriend(user._id)}
+            message={
+              user.message?.[0]?.fromSelf
+                ? "You: " + user.message?.[0]?.message
+                : user.message?.[0]?.message
+            }
+            onClick={() => handleChangeCurrentFriend(user)}
           ></ChatUser>
         ))}
       </div>
@@ -88,11 +126,16 @@ function Home() {
             </div>
             <div className={cx("body")}>
               <div className={cx("message-list")}>
-                {currentFriend.message ? (
-                  currentFriend.message.map((mes, index) => (
+                {currentFriend._id ? (
+                  getCurrentMessage.map((mes, index) => (
                     <Message
                       message={mes.message}
                       key={index}
+                      isShowAvata={
+                        getCurrentMessage[index + 1] &&
+                        getCurrentMessage[index].fromSelf !==
+                          getCurrentMessage[index + 1].fromSelf
+                      }
                       isCurrentUser={mes.fromSelf}
                     ></Message>
                   ))
@@ -101,6 +144,7 @@ function Home() {
                     <h3>Send something to your friend</h3>
                   </div>
                 )}
+                <div ref={messageList}></div>
               </div>
               <MessageInput
                 sendIsTyping={handleChangeMessageInput}
