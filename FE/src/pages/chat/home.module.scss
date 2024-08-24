@@ -4,6 +4,29 @@
     .home-left-side{
         width: 30%;
         background-color: #514688;
+        .header{
+            position: relative;
+            svg{
+                border-radius: 999px;
+                padding: 0.5rem;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: #ccc;
+            }
+        }
+        .friend-list{
+            height: 80vh;
+            overflow: auto;
+            &::-webkit-scrollbar {
+                display: none;
+            }       
+            h3{
+                text-align: center;
+                color: white;
+            }
+        }
     }
     .home-right-side{
         width: 70%;
@@ -18,7 +41,7 @@
             
             height: calc(100vh - 74px);
             
-
+            
             .message-list{
                 display: flex;
                 flex-direction: column-reverse;

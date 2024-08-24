@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef, useMemo } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPowerOff } from "@fortawesome/free-solid-svg-icons";
 
 import ChatUser from "../../components/ChatUser";
 import classNames from "classnames/bind";
@@ -63,6 +65,7 @@ function Home() {
   }, []);
 
   const addMessage = (id, message, self) => {
+    console.log(self);
     setUsers((prevUsers) =>
       prevUsers.map((user) => {
         if (user._id === id) {
@@ -80,8 +83,6 @@ function Home() {
     setCurrentFriend(user);
   };
 
-  const handleChangeMessageInput = (isTyping) => {};
-
   const handleSendMessage = async (message) => {
     const data = {
       from: currentUser._id,
@@ -97,23 +98,48 @@ function Home() {
     return users.filter((user) => user._id === currentFriend._id)[0]?.message;
   }, [currentFriend._id, users]);
 
+  const isShowAvata = (index) => {
+    const currentMsg = getCurrentMessage;
+    if (
+      (currentMsg[index + 1] &&
+        currentMsg[index].fromSelf !== currentMsg[index + 1].fromSelf) ||
+      index === currentMsg.length - 1
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(process.env.REACT_APP_LOCALHOST_USER);
+    navigate("/login");
+  };
+
   return (
     <div className={cx("home-container")}>
       <div className={cx("home-left-side")}>
-        <ChatUser username={currentUser?.username} hover={false}></ChatUser>
+        <div className={cx("header")}>
+          <ChatUser username={currentUser?.username} hover={false}></ChatUser>
+          <FontAwesomeIcon icon={faPowerOff} onClick={handleLogout} />
+        </div>
         <Search />
-        {users.map((user) => (
-          <ChatUser
-            key={user._id}
-            username={user.username}
-            message={
-              user.message?.[0]?.fromSelf
-                ? "You: " + user.message?.[0]?.message
-                : user.message?.[0]?.message
-            }
-            onClick={() => handleChangeCurrentFriend(user)}
-          ></ChatUser>
-        ))}
+        <div className={cx("friend-list")}>
+          {users.length > 0
+            ? users?.map((user) => (
+                <ChatUser
+                  key={user._id}
+                  username={user.username}
+                  message={
+                    user.message?.[0]?.fromSelf
+                      ? "You: " + user.message?.[0]?.message
+                      : user.message?.[0]?.message
+                  }
+                  onClick={() => handleChangeCurrentFriend(user)}
+                ></ChatUser>
+              ))
+            : ""}
+        </div>
       </div>
       <div className={cx("home-right-side")}>
         {currentFriend._id !== null ? (
@@ -131,11 +157,7 @@ function Home() {
                     <Message
                       message={mes.message}
                       key={index}
-                      isShowAvata={
-                        getCurrentMessage[index + 1] &&
-                        getCurrentMessage[index].fromSelf !==
-                          getCurrentMessage[index + 1].fromSelf
-                      }
+                      isShowAvata={isShowAvata(index)}
                       isCurrentUser={mes.fromSelf}
                     ></Message>
                   ))
@@ -146,15 +168,17 @@ function Home() {
                 )}
                 <div ref={messageList}></div>
               </div>
-              <MessageInput
-                sendIsTyping={handleChangeMessageInput}
-                onSubmit={handleSendMessage}
-              ></MessageInput>
+              <MessageInput onSubmit={handleSendMessage}></MessageInput>
             </div>
           </>
         ) : (
           <div className={cx("chat-welcome")}>
-            <h2>Welcome to the chat app, choose a friend to start chatting</h2>
+            <h2>
+              Welcome to the chat app,
+              {users.length > 0
+                ? " choose a friend to start chatting"
+                : " please add one more user"}
+            </h2>
           </div>
         )}
       </div>

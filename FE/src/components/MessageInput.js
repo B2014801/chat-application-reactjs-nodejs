@@ -6,10 +6,9 @@ import style from "./Component.module.scss";
 import { useState } from "react";
 
 const cx = classNames.bind(style);
-function MessageInput({ sendIsTyping, onSubmit }) {
+function MessageInput({ onSubmit }) {
   const [message, setMessage] = useState("");
   const hanldeChange = (event) => {
-    sendIsTyping(true);
     setMessage(event.target.value);
   };
   const handleSubmit = (event) => {

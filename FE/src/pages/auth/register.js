@@ -37,7 +37,7 @@ function Register() {
       toast.error("Username not empty", toastOptions);
       return false;
     }
-    if (username.length <= 2) {
+    if (username.length < 2) {
       toast.error("Username must have 2 characters or more", toastOptions);
       return false;
     }

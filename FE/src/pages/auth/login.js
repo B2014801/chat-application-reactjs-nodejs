@@ -26,7 +26,7 @@ function Login() {
   });
   const handleLogin = async (event) => {
     event.preventDefault();
-    if (isValidUser) {
+    if (isValidUser()) {
       const { data } = await axios.post(serverApi.login, formData);
       if (data.status === true) {
         navigate("/");
@@ -49,7 +49,7 @@ function Login() {
 
   const isValidUser = () => {
     const { username, password } = formData;
-    if (username === "" || password === "") {
+    if (username.trim().length === 0 || password.trim().length === 0) {
       toast.error("Username and password is required", toastOptions);
       return false;
     } else {

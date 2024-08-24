@@ -14,10 +14,7 @@ function Message({ message, isCurrentUser = false, isShowAvata }) {
     >
       {isCurrentUser === false && isShowAvata ? (
         <div className={cx("avata")}>
-          <img
-            src="https://img.freepik.com/free-vector/isolated-sad-castaway-man-white-background_1308-85035.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1723334400&semt=ais_hybrid"
-            alt=""
-          ></img>
+          <img src="../../img/avata.jpg" alt=""></img>
         </div>
       ) : (
         ""
