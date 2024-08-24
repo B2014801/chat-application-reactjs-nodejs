@@ -1,6 +1,6 @@
 # Chat Application
 
-![home page](./Images/home.PNG)
+![home page](./Image/home.PNG)
 
 ## Installation Guide
 
@@ -11,6 +11,7 @@
 
 ### Installation And Run
 
+```shell
 git clone https://github.com/B2014801/chat-application-reactjs-nodejs.git
 cd FE
 npm install
@@ -21,6 +22,7 @@ cd BE
 cd server
 npm install
 npm start
+```
 
 ## How to chat
 
