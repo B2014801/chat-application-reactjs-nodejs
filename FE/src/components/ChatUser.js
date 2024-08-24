@@ -20,7 +20,9 @@ function ChatUser({
       </div>
       <div className={cx("chat-user-infor")}>
         <h4>{username}</h4>
-        <p className={cx({ "disable-message": isDisable })}>{message}</p>
+        <p className={cx({ "disable-message": isDisable })}>
+          {message?.length > 40 ? message?.slice(0, 40) + "..." : message}
+        </p>
       </div>
     </div>
   );
