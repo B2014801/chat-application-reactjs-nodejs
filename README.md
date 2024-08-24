@@ -26,5 +26,4 @@ npm start
 
 ## How to chat
 
-Create two or more account to start chat
-You should open Chrome and Edge for test
+Create two or more account to start chat. You should open Chrome and Edge for test
